@@ -1,0 +1,244 @@
+################################################################                          WARNING!!!!                        ## This is a sandbox environment. Using personal credentials   ## is HIGHLY! discouraged. Any consequences of doing so are    ## completely the user's responsibilites.                      ##                                                             #
+# The PWD team.                                               #
+###############################################################[node1] (local) root@192.168.0.23 ~
+$ docker swarm init --advertise-addr $(hostname -i)
+Swarm initialized: current node (l0wrvjwmhu0ewsmzh9qiv6i9f) is now a manager.
+
+To add a worker to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-5hyfnjkji3ex095wxooty4b294uczl2q215tqqaldrkxlranfb-073a8hov0jvsqlxpe6picode4 192.168.0.23:2377
+
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+[node1] (local) root@192.168.0.23 ~
+$ ^C
+[node1] (local) root@192.168.0.23 ~
+$ docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+l0wrvjwmhu0ewsmzh9qiv6i9f *   node1               Ready               Active              Leader              19.03.4
+rdct235b3l564qb5k37f1851h     node2               Ready               Active               19.03.4
+[node1] (local) root@192.168.0.23 ~
+$ git clone https://github.com/bbhing98/lab3docker
+Cloning into 'lab3docker'...
+remote: Enumerating objects: 21, done.
+remote: Counting objects: 100% (21/21), done.
+remote: Compressing objects: 100% (20/20), done.
+remote: Total 21 (delta 4), reused 0 (delta 0), pack-reused 0
+Unpacking objects: 100% (21/21), done.
+[node1] (local) root@192.168.0.23 ~
+$ cd lab3docker
+[node1] (local) root@192.168.0.23 ~/lab3docker
+$ ls
+Dockerfile          docker-compose.yml  www
+api                 wikicrawler.py
+[node1] (local) root@192.168.0.23 ~/lab3docker
+$ docker stack deploy --compose-file=docker-compose.yml
+"docker stack deploy" requires exactly 1 argument.
+See 'docker stack deploy --help'.
+
+Usage:  docker stack deploy [OPTIONS] STACK
+
+Deploy a new stack or update an existing stack
+[node1] (local) root@192.168.0.23 ~/lab3docker
+$ docker stack deploy --compose-file=docker-compose.yml .
+Ignoring unsupported options: build
+
+Creating network ._default
+failed to create network ._default: Error response from daemon: rpc error: code = InvalidArgument desc = name must be valid as a DNS name component
+[node1] (local) root@192.168.0.23 ~/lab3docker
+$ docker stack deploy --compose-file=docker-compose.yml wikistack
+Ignoring unsupported options: build
+
+Creating network wikistack_default
+Creating service wikistack_api
+Creating service wikistack_web
+Creating service wikistack_redis
+[node1] (local) root@192.168.0.23 ~/lab3docker
+$ docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+l0wrvjwmhu0ewsmzh9qiv6i9f *   node1               Ready               Active              Leader              19.03.4
+rdct235b3l564qb5k37f1851h     node2               Ready               Active               19.03.4
+[node1] (local) root@192.168.0.23 ~/lab3docker
+$ docker stack services wikistack
+ID                  NAME                MODE                REPLICAS            IMAGE                PORTS
+2d58prw23efc        wikistack_api       replicated          0/1                 wikicrawler-api:step5-python   *:5000->5000/tcp
+2dbsdvpzprdh        wikistack_web       replicated          0/1                 wikicrawler-web:step5-php      *:80->80/tcp
+m4flyzjf8lg9        wikistack_redis     replicated          1/1                 redis:latest
+[node1] (local) root@192.168.0.23 ~/lab3docker
+$ docker service scale wikistack_api=5
+wikistack_api scaled to 5
+overall progress: 0 out of 5 tasks
+1/5: No such image: wikicrawler-api:step5-python
+2/5: assigned
+3/5: assigned
+4/5: No such image: wikicrawler-api:step5-python
+5/5: No such image: wikicrawler-api:step5-python
+^COperation continuing in background.
+Use `docker service ps wikistack_api` to check progress.
+[node1] (local) root@192.168.0.23 ~/lab3docker
+$ docker-compose up -d --build
+WARNING: The Docker Engine you're using is running in swarm mode.
+
+Compose does not use swarm mode to deploy services to multiple nodes in a swarm. All containers will be scheduled on the current node.
+
+To deploy your application across the swarm, use `docker stack deploy`.
+
+Creating network "lab3docker_default" with the default driver
+Building web
+Step 1/4 : FROM       php:7-apache
+7-apache: Pulling from library/php
+68ced04f60ab: Already exists
+1d2a5d8fa585: Pulling fs layer
+5d59ec4ae241: Pulling fs layer
+d42331ef4d44: Pulling fs layer
+408b7b7ee112: Pulling fs layer
+570cd47896d5: Pull complete
+2419413b2a16: Pull complete
+2c7832852643: Pull complete
+8b0b209a25bc: Pull complete
+46011418685f: Pull complete
+68be3748ea55: Pull complete
+4e3af655ec1e: Pull complete
+9f579d3b7159: Pull complete
+Digest: sha256:c496c0f962eaaea0f52d9c068bf331fe477703d4657f99b955a2a35a4c3486c4
+Status: Downloaded newer image for php:7-apache
+ ---> d753d5b380a1
+Step 2/4 : LABEL      maintainer="Ng Wei Bhing 24897"
+ ---> Running in 7610c83c5462
+Removing intermediate container 7610c83c5462
+ ---> 0c6eaea28896
+Step 3/4 : ENV        API_ENDPOINT="http://localhost:5000/api/"
+ ---> Running in 94fd7675200d
+Removing intermediate container 94fd7675200d
+ ---> 85b59eb086dc
+Step 4/4 : COPY       . /var/www/html/
+ ---> 808465419fa1
+Successfully built 808465419fa1
+Successfully tagged wikicrawler-web:step5-php
+Building api
+Step 1/9 : FROM       python:3
+3: Pulling from library/python
+50e431f79093: Pulling fs layer
+dd8c6d374ea5: Pull complete
+c85513200d84: Pull complete
+55769680e827: Pull complete
+f5e195d50b88: Pull complete
+94cdd3612287: Pull complete
+3b37b69935d4: Pull complete
+b9add85f08c4: Pull complete
+aa1f4a29beac: Pull complete
+Digest: sha256:da4f61227d5facb694293c1356051403d0d163a2d7aa8a0e0d3d9cfc347e3901
+Status: Downloaded newer image for python:3
+ ---> f88b2f81f83a
+Step 2/9 : LABEL      maintainer="Ng Wei Bhing 24897"
+ ---> Running in bad9e15cbedb
+Removing intermediate container bad9e15cbedb
+ ---> 592d8e8b166e
+Step 3/9 : ENV        REDIS_URL="redis://localhost:6379"
+ ---> Running in 2a2036d6902f
+Removing intermediate container 2a2036d6902f
+ ---> ee1a90f3d0f2
+Step 4/9 : WORKDIR    /app
+ ---> Running in d15c908671aa
+Removing intermediate container d15c908671aa
+ ---> 3f240a502dcf
+Step 5/9 : COPY       requirements.txt /app/
+ ---> e9be6f0dad6c
+Step 6/9 : RUN        pip install -r requirements.txt
+ ---> Running in 03fe86721197
+Collecting beautifulsoup4
+  Downloading beautifulsoup4-4.8.2-py3-none-any.whl (106 kB)
+Collecting flask
+  Downloading Flask-1.1.1-py2.py3-none-any.whl (94 kB)
+Collecting redis
+  Downloading redis-3.4.1-py2.py3-none-any.whl (71 kB)
+Collecting wikipedia
+  Downloading wikipedia-1.4.0.tar.gz (27 kB)
+Collecting requests
+  Downloading requests-2.23.0-py2.py3-none-any.whl (58 kB)
+Collecting soupsieve>=1.2
+  Downloading soupsieve-2.0-py2.py3-none-any.whl (32 kB)
+Collecting itsdangerous>=0.24
+  Downloading itsdangerous-1.1.0-py2.py3-none-any.whl (16 kB)
+Collecting click>=5.1
+  Downloading Click-7.0-py2.py3-none-any.whl (81 kB)
+Collecting Werkzeug>=0.15
+  Downloading Werkzeug-1.0.0-py2.py3-none-any.whl (298 kB)
+Collecting Jinja2>=2.10.1
+  Downloading Jinja2-2.11.1-py2.py3-none-any.whl (126 kB)
+Collecting chardet<4,>=3.0.2
+  Downloading chardet-3.0.4-py2.py3-none-any.whl (133 kB)
+Collecting urllib3!=1.25.0,!=1.25.1,<1.26,>=1.21.1
+  Downloading urllib3-1.25.8-py2.py3-none-any.whl (125 kB)
+Collecting certifi>=2017.4.17
+  Downloading certifi-2019.11.28-py2.py3-none-any.whl (156 kB)
+Collecting idna<3,>=2.5
+  Downloading idna-2.9-py2.py3-none-any.whl (58 kB)
+Collecting MarkupSafe>=0.23
+  Downloading MarkupSafe-1.1.1-cp38-cp38-manylinux1_x86_64.whl (32 kB)
+Building wheels for collected packages: wikipedia
+  Building wheel for wikipedia (setup.py): started
+  Building wheel for wikipedia (setup.py): finished with status 'done'
+  Created wheel for wikipedia: filename=wikipedia-1.4.0-py3-none-any.whl size=11685 sha256=748e905f0f86da7b2b8bd1cffe1a5977a79062d70ef97cf37beb784cb89dfb26
+  Stored in directory: /root/.cache/pip/wheels/07/93/05/72c05349177dca2e0ba31a33ba4f7907606f7ddef303517c6a
+Successfully built wikipedia
+Installing collected packages: soupsieve, beautifulsoup4, itsdangerous, click, Werkzeug, MarkupSafe, Jinja2, flask, redis, chardet, urllib3, certifi, idna, requests, wikipedia
+Successfully installed Jinja2-2.11.1 MarkupSafe-1.1.1 Werkzeug-1.0.0 beautifulsoup4-4.8.2 certifi-2019.11.28 chardet-3.0.4 click-7.0 flask-1.1.1 idna-2.9 itsdangerous-1.1.0 redis-3.4.1 requests-2.23.0 soupsieve-2.0 urllib3-1.25.8 wikipedia-1.4.0
+Removing intermediate container 03fe86721197
+ ---> dd3bbade4c94
+Step 7/9 : COPY       *.py /app/
+ ---> d15614cfdf48
+Step 8/9 : RUN        chmod a+x *.py
+ ---> Running in 537846e8b824
+Removing intermediate container 537846e8b824
+ ---> 9713c7d7c1a9
+Step 9/9 : CMD        ["./main.py"]
+ ---> Running in 96e70053db27
+Removing intermediate container 96e70053db27
+ ---> 80d7b96b8df9
+Successfully built 80d7b96b8df9
+Successfully tagged wikicrawler-api:step5-python
+Pulling redis (redis:)...
+latest: Pulling from library/redis
+Creating lab3docker_redis_1 ...
+Creating lab3docker_api_1   ...
+Creating lab3docker_web_1   ... error
+
+Creating lab3docker_redis_1 ... doneCreating lab3docker_api_1   ... donea4f6ea1): Error starting userland proxy: listen tcp 0.0.0.0:80: bind: address already in use
+
+ERROR: for web  Cannot start service web: driver failed programming external connectivity on endpoint lab3docker_web_1 (4af48ca8f48f98500b5c0c53f3a31a5c454d11282b68c2185443d0c9da4f6ea1): Error starting userland proxy: listen tcp 0.0.0.0:80: bind: address already in use
+ERROR: Encountered errors while bringing up the project.
+[node1] (local) root@192.168.0.23 ~/lab3docker
+$ docker stack services wikistack
+ID                  NAME                MODE                REPLICAS            IMAGE                PORTS
+2d58prw23efc        wikistack_api       replicated          0/5                 wikicrawler-api:step5-python   *:5000->5000/tcp
+2dbsdvpzprdh        wikistack_web       replicated          1/1                 wikicrawler-web:step5-php      *:80->80/tcp
+m4flyzjf8lg9        wikistack_redis     replicated          1/1                 redis:latest
+[node1] (local) root@192.168.0.23 ~/lab3docker
+$ docker service scale wikistack_api=5
+wikistack_api scaled to 5
+overall progress: 0 out of 5 tasks
+1/5: ready
+2/5: starting
+3/5: ready
+4/5: No such image: wikicrawler-api:step5-python
+5/5: starting
+^COperation continuing in background.
+Use `docker service ps wikistack_api` to check progress.
+[node1] (local) root@192.168.0.23 ~/lab3docker
+$ docker service scale wikistack_api=5
+wikistack_api scaled to 5
+overall progress: 0 out of 5 tasks
+1/5: ready
+2/5: ready
+3/5: ready
+4/5: ready
+5/5: ready
+Operation continuing in background.
+Use `docker service ps wikistack_api` to check progress.
+[node1] (local) root@192.168.0.23 ~/lab3docker
+$ docker stack services wikistack
+ID                  NAME                MODE                REPLICAS            IMAGE                PORTS
+2d58prw23efc        wikistack_api       replicated          5/5                 wikicrawler-api:step5-python   *:5000->5000/tcp
+2dbsdvpzprdh        wikistack_web       replicated          1/1                 wikicrawler-web:step5-php      *:80->80/tcp
+m4flyzjf8lg9        wikistack_redis     replicated          1/1                 redis:latest

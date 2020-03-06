@@ -1,0 +1,314 @@
+[node1] (local) root@192.168.0.18 ~/lab3docker
+$ git clone https://github.com/bbhing98/lab3docker into 'test'...
+remote: Enumerating objects: 33, done.
+remote: Counting objects: 100% (33/33), done.
+remote: Compressing objects: 100% (30/30), done.
+remote: Total 33 (delta 6), reused 0 (delta 0), pack-reused 0
+Unpacking objects: 100% (33/33), done.
+[node1] (local) root@192.168.0.18 ~/lab3docker
+$ ls
+Dockerfile          www
+api                 wikicrawler.py
+docker-compose.yml  
+[node1] (local) root@192.168.0.18 ~/lab3docker
+$ docker image build -t wikicrawler:step5 .
+Sending build context to Docker daemon  641.5kB
+Step 1/8 : FROM       python:3
+ ---> f88b2f81f83a
+Step 2/8 : RUN        pip install beautifulsoup4
+ ---> Using cache
+ ---> 6c152c934678
+Step 3/8 : RUN        pip install requests
+ ---> Using cache
+ ---> 4a107f60b802
+Step 4/8 : RUN        pip install Wikipedia
+ ---> Using cache
+ ---> eacce2e4d4ab
+Step 5/8 : WORKDIR    /app
+ ---> Using cache
+ ---> 175d872be5e1
+Step 6/8 : COPY       wikicrawler.py /app/
+ ---> b777ccdf133f
+Step 7/8 : RUN        chmod a+x wikicrawler.py
+ ---> Running in e8977b77501f
+Removing intermediate container e8977b77501f
+ ---> 8fc291dfa037
+Step 8/8 : ENTRYPOINT ["./wikicrawler.py"]
+ ---> Running in f5bc7506ab2e
+Removing intermediate container f5bc7506ab2e
+ ---> 6f5afa184201
+Successfully built 6f5afa184201
+Successfully tagged wikicrawler:step5
+[node1] (local) root@192.168.0.18 ~/lab3docker
+$ docker image ls
+REPOSITORY          TAG                 IMAGE ID         CREATED             SIZE
+wikicrawler         step5               6f5afa184201        13 seconds ago      944MB
+<none>              <none>              744291a587e9        8 minutes ago       944MB
+python              3                   f88b2f81f83a        8 days ago          933MB
+[node1] (local) root@192.168.0.18 ~/lab3docker
+$ docker container run -it --rm wikicrawler:step5 manjung
+Al G. Manning
+Albert Manning
+Anne Manning (racewalker)
+Archie Manning
+Atlantic Brass Quintet
+Aubrey Manning
+Barbara Manning
+Bernard Manning
+Brandon Manning
+Brennan Manning
+Brian G. W. Manning
+Brian Manning (American football)
+Brian Manning (disambiguation)
+Brian Manning (historian)
+Brian Manning (trade unionist and activist)
+Caroline Joyce Manning
+Catherine Lemmon Manning
+Chelsea Manning
+Chrisshad C. Manning
+Chronicon Scotorum
+Clarence Manning
+Cooper Manning
+County Cork
+County Dublin
+Craig Manning
+Curtis Manning (24 character)
+Curtis Manning (lacrosse)
+Danieal Manning
+Daniel Manning
+Danielle Manning
+Danny Manning
+Darren Manning
+David Manning
+David Manning (fictitious writer)
+Dick Manning
+Dorothy Manning
+Ed Manning
+Edward Manning (disambiguation)
+Eli Manning
+Elizabeth Manning (disambiguation)
+Emily Manning
+Ernest Manning
+Family name
+Frankie Manning
+Frederic Manning
+Galway
+Geoff Manning
+Given name
+Guy Manning
+Harold I of England
+Harold Manning
+Henry Edward Manning
+Henry J. Manning
+Henry Manning (disambiguation)
+Henry Manning (politician)
+Henry Manning (spy)
+Hugh Manning
+Jack Manning (One Life to Live)
+Jack Manning (actor)
+Jack Manning (baseball)
+James David Manning
+James I of England
+Jeff Manning
+Jessie Wilson Manning
+Jim Manning (baseball)
+John B. Manning
+John Charles Manning
+John Edmondson Manning
+John F. Manning
+John Lawrence Manning
+John Manning (disambiguation)
+John Manning (footballer)
+John Manning (journalist)
+John Manning (rugby union)
+John Manning Jr.
+Katy Manning
+Laurence Manning
+Madeline Manning
+Manning (disambiguation)
+Manning rule
+Manningham, Bradford
+Marie Manning (murderer)
+Matthew Manning
+Maurice Manning
+Maurice Manning (Poet)
+Meg Manning
+Menlough
+Michael Manning (disambiguation)
+Mick Manning
+Mike Manning (actor)
+Nelson H. Manning
+Nick Manning
+Orlando H. Manning
+Orphan Black
+Owen Manning
+Padraig Gearr Ó Mannin
+Patrick Manning
+Paul Manning (TV producer)
+Paul Manning (cyclist)
+Paul Manning (disambiguation)
+Paul Manning (ice hockey)
+Paul Manning (journalist)
+Paul Manning (police officer)
+Paul Mannion
+Peter Manning
+Peyton Manning
+Phil Manning (footballer)
+Phil Manning (musician)
+Preston Manning
+Randolph Manning
+Raymond B. Manning
+Richard I of England
+Rick Manning
+Ricky Manning, Jr.
+Robert Manning (disambiguation)
+Roger Manning (disambiguation)
+Rosie Manning
+Rube Manning
+Sam Manning (One Life to Live)
+Scott Manning
+Second Battle of Athenry
+Sidney E. Manning
+Soghain
+Starr Manning
+Stuart Manning
+Surname
+Taryn Manning
+Terry Manning
+Thomas William Manning
+Timothy Manning
+Todd Manning
+Trevor Manning
+Téa Delgado
+Wayne Eyer Manning
+William Manning (British politician)
+William Montagu Manning
+William Thomas Manning
+[node1] (local) root@192.168.0.18 ~/lab3docker
+$ docker-compose up -d --build
+Creating network "lab3docker_default" with the default driver
+Building web
+Step 1/4 : FROM       php:7-apache
+7-apache: Pulling from library/php
+68ced04f60ab: Pull complete
+1d2a5d8fa585: Pull complete
+5d59ec4ae241: Pull complete
+d42331ef4d44: Pull complete
+408b7b7ee112: Pull complete
+570cd47896d5: Pull complete
+2419413b2a16: Pull complete
+2c7832852643: Pull complete
+8b0b209a25bc: Pull complete
+46011418685f: Pull complete
+68be3748ea55: Pull complete
+4e3af655ec1e: Pull complete
+9f579d3b7159: Pull complete
+Digest: sha256:c496c0f962eaaea0f52d9c068bf331fe477703d4657f99b955a2a35a4c3486c4
+Status: Downloaded newer image for php:7-apache
+ ---> d753d5b380a1
+Step 2/4 : LABEL      maintainer="Ng Wei Bhing 24897"
+ ---> Running in 65bb52f77582
+Removing intermediate container 65bb52f77582
+ ---> eb015778ebe9
+Step 3/4 : ENV        API_ENDPOINT="http://localhost:5000/api/"
+ ---> Running in b80abdc8f761
+Removing intermediate container b80abdc8f761
+ ---> db4730f1d6b2
+Step 4/4 : COPY       . /var/www/html/
+ ---> 4290569e8880
+Successfully built 4290569e8880
+Successfully tagged wikicrawler-web:step5-php
+Building api
+Step 1/9 : FROM       python:3
+ ---> f88b2f81f83a
+Step 2/9 : LABEL      maintainer="Ng Wei Bhing 24897"
+ ---> Running in b9fc01871045
+Removing intermediate container b9fc01871045
+ ---> 9759a0567e8a
+Step 3/9 : ENV        REDIS_URL="redis://localhost:6379"
+ ---> Running in ff1907f1b8c9
+Removing intermediate container ff1907f1b8c9
+ ---> 86a7e57ec64c
+Step 4/9 : WORKDIR    /app
+ ---> Running in c2c5be013ce3
+Removing intermediate container c2c5be013ce3
+ ---> 7f90b7ae18b6
+Step 5/9 : COPY       requirements.txt /app/
+ ---> dc1965edf6b4
+Step 6/9 : RUN        pip install -r requirements.txt
+ ---> Running in c91657df75f5
+Collecting beautifulsoup4
+  Downloading beautifulsoup4-4.8.2-py3-none-any.whl (106 kB)
+Collecting flask
+  Downloading Flask-1.1.1-py2.py3-none-any.whl (94kB)
+Collecting redis
+  Downloading redis-3.4.1-py2.py3-none-any.whl (71kB)
+Collecting wikipedia
+  Downloading wikipedia-1.4.0.tar.gz (27 kB)
+Collecting requests
+  Downloading requests-2.23.0-py2.py3-none-any.whl(58 kB)
+Collecting soupsieve>=1.2
+  Downloading soupsieve-2.0-py2.py3-none-any.whl (32 kB)
+Collecting click>=5.1
+  Downloading Click-7.0-py2.py3-none-any.whl (81 kB)
+Collecting itsdangerous>=0.24
+  Downloading itsdangerous-1.1.0-py2.py3-none-any.whl (16 kB)
+Collecting Jinja2>=2.10.1
+  Downloading Jinja2-2.11.1-py2.py3-none-any.whl (126 kB)
+Collecting Werkzeug>=0.15
+  Downloading Werkzeug-1.0.0-py2.py3-none-any.whl (298 kB)
+Collecting certifi>=2017.4.17
+  Downloading certifi-2019.11.28-py2.py3-none-any.whl (156 kB)
+Collecting idna<3,>=2.5
+  Downloading idna-2.9-py2.py3-none-any.whl (58 kB)
+Collecting chardet<4,>=3.0.2
+  Downloading chardet-3.0.4-py2.py3-none-any.whl (133 kB)
+Collecting urllib3!=1.25.0,!=1.25.1,<1.26,>=1.21.1
+  Downloading urllib3-1.25.8-py2.py3-none-any.whl (125 kB)
+Collecting MarkupSafe>=0.23
+  Downloading MarkupSafe-1.1.1-cp38-cp38-manylinux1_x86_64.whl (32 kB)
+Building wheels for collected packages: wikipedia
+  Building wheel for wikipedia (setup.py): started
+  Building wheel for wikipedia (setup.py): finished with status 'done'
+  Created wheel for wikipedia: filename=wikipedia-1.4.0-py3-none-any.whl size=11685 sha256=3bd92d89448f50806727abfcba523e06ab12e32e7967a005ec022362c68881c3
+  Stored in directory: /root/.cache/pip/wheels/07/93/05/72c05349177dca2e0ba31a33ba4f7907606f7ddef303517c6a
+Successfully built wikipedia
+Installing collected packages: soupsieve, beautifulsoup4, click, itsdangerous, MarkupSafe, Jinja2, Werkzeug, flask, redis, certifi, idna, chardet, urllib3, requests, wikipedia
+Successfully installed Jinja2-2.11.1 MarkupSafe-1.1.1 Werkzeug-1.0.0 beautifulsoup4-4.8.2 certifi-2019.11.28 chardet-3.0.4 click-7.0 flask-1.1.1 idna-2.9 itsdangerous-1.1.0 redis-3.4.1 requests-2.23.0 soupsieve-2.0 urllib3-1.25.8 wikipedia-1.4.0
+Removing intermediate container c91657df75f5
+ ---> ec0dcedcc0ef
+Step 7/9 : COPY       *.py /app/
+ ---> 1ee97d410e76
+Step 8/9 : RUN        chmod a+x *.py
+ ---> Running in eb80fa3c62a9
+Removing intermediate container eb80fa3c62a9
+ ---> 130161b96734
+Step 9/9 : CMD        ["./main.py"]
+ ---> Running in a6b2a7c3a894
+Removing intermediate container a6b2a7c3a894
+ ---> 61aa9db0e9ca
+Successfully built 61aa9db0e9ca
+Successfully tagged wikicrawler-api:step5-python
+Pulling redis (redis:)...
+latest: Pulling from library/redis
+68ced04f60ab: Already exists
+7ecc253967df: Pull complete
+765957bf98d4: Pull complete
+52f16772e1ca: Pull complete
+2e43ba99c3f3: Pull complete
+d95576c71392: Pull complete
+Creating lab3docker_api_1   ... done
+Creating lab3docker_redis_1 ... done
+Creating lab3docker_web_1   ... done
+[node1] (local) root@192.168.0.18 ~/lab3docker
+$ docker container ls
+CONTAINER ID        IMAGECOMMAND                  CREATED             STATUS              PORTS                    NAMES
+01e29a24b22f        wikicrawler-api:step5-python"./main.py"              11 seconds ago      Up 9 seconds        0.0.0.0:5000->5000/tcp   lab3docker_api_1
+c194a18b073c        wikicrawler-web:step5-php"docker-php-entrypoi…"   11 seconds ago      Up 9 seconds        0.0.0.0:80->80/tcp       lab3docker_web_1
+7fa0f31f7122        redis"docker-entrypoint.s…"   11 seconds ago      Up 10seconds       6379/tcp                 lab3docker_redis_1
+[node1] (local) root@192.168.0.18 ~/lab3docker
+$ docker container ls
+CONTAINER ID        IMAGE                          COMMAND                  CREATED             STATUS              PORTS                  NAMES
+01e29a24b22f        wikicrawler-api:step5-python   "./main.py"              15 seconds ago      Up 13 seconds       0.0.0.0:5000->5000/tcp   lab3docker_api_1
+c194a18b073c        wikicrawler-web:step5-php      "docker-php-entrypoi…"   15 seconds ago      Up 13 seconds       0.0.0.0:80->80/tcp       lab3docker_web_1
+7fa0f31f7122        redis                          "docker-entrypoint.s…"   15 seconds ago      Up 13 seconds       6379/tcp                 lab3docker_redis_1	
