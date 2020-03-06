@@ -3,6 +3,7 @@
 from flask import Flask
 from flask import request
 from flask import jsonify
+from wikicrawler import extract_links
 
 app = Flask(__name__)
 
